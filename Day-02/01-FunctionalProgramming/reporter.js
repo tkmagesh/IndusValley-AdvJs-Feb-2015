@@ -1,49 +1,39 @@
 (function(){
    if (typeof window.report !== "function"){
-   		var reportConsole = document.createElement("div");
-
-   		var showHide = document.createElement("div");
-   		showHide.style.cursor = "pointer";
-   		showHide.style.color = "red";
-   		showHide.innerHTML = "show";
-   		reportConsole.appendChild(showHide);
-
-
-   		var flag = -1;
-   		showHide.addEventListener("click", function(){
-   			flag *= -1;
-   			if (flag === 1){
-   				reportContainer.style.display = "none";
-   				showHide.innerHTML = "show";
-   			} else {
-   				reportContainer.style.display = "block";
-   				showHide.innerHTML = "hide";
-   			}
-   		});
-   		reportConsole.style.position = "absolute";
-   		reportConsole.style.bottom = "0px";
-   		reportConsole.style.right = "0px";
-   		//reportConsole.style.height = "300px";
-   		//reportConsole.style.width = "300px";
-   		reportConsole.style.zIndex = "1000";
-   		reportConsole.style.border = "2px solid black";
-   		reportConsole.style.backgroundColor = "#FFF";
-   		reportConsole.style.borderRadius = "3px";
-
-   		var reportContainer = document.createElement("div");
-   		reportConsole.appendChild(reportContainer);
-
-    	window.report = function(msg){
-    		displayMessage(msg);
-    	};
-    	function displayMessage(msg){
-    		var msgContainer = document.createElement("div");
-    		msgContainer.innerHTML = msg;
-    		reportContainer.appendChild(msgContainer);
+      var reportControlStyle = {
+        position : "fixed",
+        bottom : "0px",
+        right : "0px",
+        zIndex : "1000",
+        border : "2px solid black",
+        backgroundColor : "#FFF",
+        borderRadius : "3px"
+      };
+   		var $reportConsole = $("<div>").css(reportControlStyle);
+      var $reportContainer = $("<div>");
+   		$("<div>")
+        .css({
+          cursor : "pointer",
+          color : "red"
+        })
+        .html("Hide")
+        .click(function(){
+            $reportContainer.toggle(400);
+            $(this).html( $(this).html() === "Hide" ? "Show" : "Hide" )
+          })
+        .appendTo($reportConsole);
+        $reportConsole.append($reportContainer);
+        $("<input type='text'>")
+          .keyup(function(e){
+            if (e.keyChar === 13){
+              console.log("Enter key pressed");
+            }
+          })
+    	window.report = function report(msg){
+    		$("<div>").html(msg).appendTo($reportContainer);
     	}   
-    	window.addEventListener("DOMContentLoaded", function(){
-    		document.body.appendChild(reportConsole);
-    	});
+      $(function(){
+        $reportConsole.appendTo(document.body);
+      })
    }
-
 })()
