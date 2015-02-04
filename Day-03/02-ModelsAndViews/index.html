@@ -33,10 +33,12 @@
 			return _data[attrName];
 		};
 
+		
+
 		this.set = function(attrName, value){
 			_data[attrName] = value;
 			//trigger change notifications
-			triggerChange(attrName);
+			triggerChange.call(this, attrName);
 		};
 
 		var _eventSubscriptions = {};
@@ -50,65 +52,80 @@
 			var subscriptionFns = _eventSubscriptions[attrName] || [];
 			for(var i=0;i<subscriptionFns.length;i++){
 				var subscriptionFn = subscriptionFns[i];
-				console.log("this in triggerChange ->" , this);
 				subscriptionFn.call(this);
 			}
 		}
 	}
 	SalaryCalculator.prototype.calculate = function(){
-		var gross = this.basic + this.hra + this.da;
-		this.salary = gross * ((100-this.tax)/100);
-		if (typeof this.onSalaryChange === "function"){
-			this.onSalaryChange();
+		var gross = this.get('basic') + this.get('hra') + this.get('da');
+		this.set('salary', gross * ((100-this.get('tax'))/100));
+		
+	}
+
+	function SalaryCalculatorView(calculator){
+		var $root = this.$root = $("<div></div>");
+
+		this.init = function(){
+			//Model changes
+			calculator.addSubscriber("salary", function(){
+				$("#divResult", $root).html(this.get('salary'));
+			});
+			calculator.addSubscriber("basic", function(){
+				$("#txtBasic", $root).val(this.get('basic'));
+			});
+			calculator.addSubscriber("hra", function(){
+				$("#txtHra", $root).val(this.get('hra'));
+			});
+			calculator.addSubscriber("da", function(){
+				$("#txtDa", $root).val(this.get('da'));
+			});
+			calculator.addSubscriber("tax", function(){
+				$("#rangeTax", $root).val(this.get('tax'));
+				$("#spanTax", $root).text(this.get('tax') + '%');
+			});
+
+			//UI Events
+			$root.on("change", "#txtBasic", function(){
+				calculator.set('basic', parseInt(this.value,10));
+			});
+			$root.on("change", "#txtHra", function(){
+				calculator.set('hra', parseInt(this.value,10));
+			});
+			$root.on("change", "#txtDa", function(){
+				calculator.set('da', parseInt(this.value,10));
+			});
+			$root.on("change", "#rangeTax", function(){
+				calculator.set('tax', parseInt(this.value,10));
+			});
+
+			$root.on("click", "#btnCalculate", function(){
+				calculator.calculate();
+			});
+
+		};
+
+		this.render = function(){
+			var templateHTML = $("#calculatorTemplate").html();
+			$root.html(templateHTML);
 		}
 	}
 
 
 	$(function(){
 		window.calculator = new SalaryCalculator();
-		//Model changes
-		calculator.addSubscriber("salary", function(){
-			$("#divResult").html(this.get('salary'));
-		});
-		calculator.addSubscriber("basic", function(){
-			console.log("this -> ", this);
-			$("#txtBasic").val(this.get('basic'));
-		});
-		calculator.addSubscriber("hra", function(){
-			$("#txtHra").val(this.get('hra'));
-		});
-		calculator.addSubscriber("da", function(){
-			$("#txtDa").val(this.get('da'));
-		});
-		calculator.addSubscriber("tax", function(){
-			$("#rangeTax").val(this.get('tax'));
-			$("#spanTax").text(this.get('tax') + '%');
-		});
+		var view1 = new SalaryCalculatorView(calculator);
+		view1.init();
+		view1.render();
+		view1.$root.appendTo(document.body);	
 
-		//UI Events
-		$("#txtBasic").change(function(){
-			calculator.set('basic', parseInt(this.value,10));
-		});
-		$("#txtHra").change(function(){
-			calculator.set('hra', parseInt(this.value,10));
-		});
-		$("#txtDa").change(function(){
-			calculator.set('da', parseInt(this.value,10));
-		});
-		$("#rangeTax").change(function(){
-			calculator.set('tax', parseInt(this.value,10));
-		});
-
-		$("#btnCalculate").click(function(){
-			calculator.calculate();
-		});
-
+		var view2 = new SalaryCalculatorView(calculator);
+		view2.init();
+		view2.render();
+		view2.$root.appendTo(document.body);	
 		
-	});
+	});*/
 	</script>
-</head>
-<body>
-	<h1>Salary Calculator</h1>
+	<script type="text/template" id="calculatorTemplate">
 	<hr>
 	<div><label for="">Basic :</label><input type="text" name="" id="txtBasic"></div>
 	<div><label for="">HRA :</label><input type="text" name="" id="txtHra"></div>
@@ -122,5 +139,10 @@
 	<div>
 		<div id="divResult">[Salary]</div>
 	</div>
+	</script>
+</head>
+<body>
+	<h1>Salary Calculator</h1>
+	
 </body>
 </html>

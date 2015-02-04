@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Event Bubbling Demo</title>
+	<style>
+	div{
+		border : 2px solid;
+		padding : 10px;
+		margin : 10px;
+	}
+	.first{
+		border-color: blue;
+		background-color: lightblue;
+	}
+	.second{
+		border-color : red;
+		background-color: lightpink;
+	}
+	.third{
+		border-color: green;
+		background-color: lightgreen;
+	}
+	</style>
+</head>
+<body>
+	<div class="first">
+		<div class="second">
+			<div class="third"><span class="spanText">This is a simple text</span></div>
+		</div>
+	</div>
+</body>
+</html>
