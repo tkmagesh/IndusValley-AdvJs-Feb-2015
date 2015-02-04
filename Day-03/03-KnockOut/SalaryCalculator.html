@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Salary Calculator</title>
+	<style>
+	label{
+		display : block;
+	}
+	#divResult{
+		color : red;
+		font-weight: bold;
+		font-size: 28pt;
+	}
+	</style>
+	<script src="knockout-3.2.0.debug.js"></script>
+	<script>
+		function SalaryCalculator(){
+			this.basic = ko.observable(0);
+			this.hra = ko.observable(0);
+			this.da = ko.observable(0);
+			this.tax = ko.observable(0);
+			this.salary = ko.observable(0);
+
+			this.calculate = function(){
+				var gross = parseInt(this.basic(),10) + parseInt(this.hra(),10) + parseInt(this.da(),10);
+				var net = gross * ((100-parseInt(this.tax(),10))/100);
+				this.salary(net);
+			}
+		}
+		window.addEventListener("DOMContentLoaded" , function(){
+			window.calculator = new SalaryCalculator();
+			ko.applyBindings(calculator);
+		})
+	
+	</script>
+</head>
+<body>
+	<h1>Salary Calculator</h1>
+	<hr>
+	<div><label for="">Basic :</label><input type="text" data-bind="value: basic"></div>
+	<div><label for="">HRA :</label><input type="text" data-bind="value: hra"></div>
+	<div><label for="">DA :</label><input type="text" data-bind="value: da"></div>
+	<div>
+		<label for="">Tax :</label>
+		<input type="range" name="" id="rangeTax" min="0" max="30" data-bind="value: tax">
+		<span id="spanTax" data-bind="text : tax"> </span>
+	</div>
+	<div><input type="button" value="Calculate" id="btnCalculate" data-bind="click : calculate"></div>
+	<div>
+		<div id="divResult" data-bind="text :salary"></div>
+	</div>
+</body>
+</html>

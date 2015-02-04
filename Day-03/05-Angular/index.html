@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="greetApp">
+<head>
+	<meta charset="UTF-8">
+	<title>Salary Calculator</title>
+	<script src="angular.min.js"></script>
+	<script>
+	angular
+		.module("greetApp", [])
+		.controller("greetController", function greetController($scope){
+			$scope.name = "Magesh";
+			$scope.greet = function(){
+				$scope.msg = "Hi " + $scope.name + ", Have a nice day!";
+			}
+		});
+	
+	</script>
+</head>
+<body  data-ng-controller="greetController">
+
+	<input type="text" ng-model="name" >
+	<input type="button" value="Greet" data-ng-click="greet()">
+	<div>{{msg}}</div>
+
+
+	<!-- <h1>Salary Calculator</h1>
+	<hr>
+	<div><label for="">Basic :</label><input type="text" name="" id="txtBasic"></div>
+	<div><label for="">HRA :</label><input type="text" name="" id="txtHra"></div>
+	<div><label for="">DA :</label><input type="text" name="" id="txtDa"></div>
+	<div>
+		<label for="">Tax :</label>
+		<input type="range" name="" id="rangeTax" min="0" max="30" value="0">
+		<span id="spanTax">[Tax%]</span>
+	</div>
+	<div><input type="button" value="Calculate" id="btnCalculate"></div>
+	<div>
+		<div id="divResult">[Salary]</div>
+	</div> -->
+</body>
+</html>

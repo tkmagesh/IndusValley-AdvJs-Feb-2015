@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Salary Calculator</title>
+	<script src="knockout-3.2.0.debug.js"></script>
+	<script>
+	var emp = {
+		firstName : ko.observable("Magesh"),
+		lastName : ko.observable("Kuppan")
+	};
+	window.addEventListener("DOMContentLoaded", function(){
+		ko.applyBindings(emp);	
+	});
+	
+	</script>
+</head>
+<body>
+	<input type="text" data-bind="value: firstName">
+	<input type="text" data-bind="value: lastName">
+</body>
+</html>

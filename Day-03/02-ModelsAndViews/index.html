@@ -27,7 +27,11 @@
 			da : 0,
 			tax :0,
 			salary : 0,
+			canCalculate : false
 		};
+
+		
+
 
 		this.get = function(attrName){
 			return _data[attrName];
@@ -39,7 +43,14 @@
 			_data[attrName] = value;
 			//trigger change notifications
 			triggerChange.call(this, attrName);
+			if (attrName != "canCalculate")
+				applyCanCalculate.call(this);
 		};
+
+		function applyCanCalculate(){
+			var canCalculate = (this.get('basic') > 0) && (this.get('hra') > 0) && (this.get('da') > 0);
+			this.set("canCalculate", canCalculate);
+		}
 
 		var _eventSubscriptions = {};
 
@@ -84,6 +95,10 @@
 				$("#spanTax", $root).text(this.get('tax') + '%');
 			});
 
+			calculator.addSubscriber("canCalculate", function(){
+				$("#btnCalculate").attr("disabled", !this.get("canCalculate"));
+			});			
+
 			//UI Events
 			$root.on("change", "#txtBasic", function(){
 				calculator.set('basic', parseInt(this.value,10));
@@ -123,7 +138,7 @@
 		view2.render();
 		view2.$root.appendTo(document.body);	
 		
-	});*/
+	});
 	</script>
 	<script type="text/template" id="calculatorTemplate">
 	<hr>
