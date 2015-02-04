@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Salary Calculator</title>
+	<style type="text/css">
+		label{
+			display : block;
+		}
+		#divResult {
+			color : red;
+			font-size: 28pt;
+		}
+	</style>
+	<script src="jQuery.js"></script>
+	<script>
+	function SalaryCalculator(){
+		/*this.basic = 0;
+		this.hra =0;
+		this.da = 0;
+		this.tax = 0;
+		this.salary = 0;
+		this.onSalaryChange = undefined;*/
+		var _data = {
+			basic : 0,
+			hra : 0,
+			da : 0,
+			tax :0,
+			salary : 0,
+		};
+
+		this.get = function(attrName){
+			return _data[attrName];
+		};
+
+		this.set = function(attrName, value){
+			_data[attrName] = value;
+			//trigger change notifications
+			triggerChange(attrName);
+		};
+
+		var _eventSubscriptions = {};
+
+		this.addSubscriber = function(attrName, subscriptionFn){
+			_eventSubscriptions[attrName] = _eventSubscriptions[attrName] || [];
+			_eventSubscriptions[attrName].push(subscriptionFn);
+		};
+
+		function triggerChange(attrName){
+			var subscriptionFns = _eventSubscriptions[attrName] || [];
+			for(var i=0;i<subscriptionFns.length;i++){
+				var subscriptionFn = subscriptionFns[i];
+				console.log("this in triggerChange ->" , this);
+				subscriptionFn.call(this);
+			}
+		}
+	}
+	SalaryCalculator.prototype.calculate = function(){
+		var gross = this.basic + this.hra + this.da;
+		this.salary = gross * ((100-this.tax)/100);
+		if (typeof this.onSalaryChange === "function"){
+			this.onSalaryChange();
+		}
+	}
+
+
+	$(function(){
+		window.calculator = new SalaryCalculator();
+		//Model changes
+		calculator.addSubscriber("salary", function(){
+			$("#divResult").html(this.get('salary'));
+		});
+		calculator.addSubscriber("basic", function(){
+			console.log("this -> ", this);
+			$("#txtBasic").val(this.get('basic'));
+		});
+		calculator.addSubscriber("hra", function(){
+			$("#txtHra").val(this.get('hra'));
+		});
+		calculator.addSubscriber("da", function(){
+			$("#txtDa").val(this.get('da'));
+		});
+		calculator.addSubscriber("tax", function(){
+			$("#rangeTax").val(this.get('tax'));
+			$("#spanTax").text(this.get('tax') + '%');
+		});
+
+		//UI Events
+		$("#txtBasic").change(function(){
+			calculator.set('basic', parseInt(this.value,10));
+		});
+		$("#txtHra").change(function(){
+			calculator.set('hra', parseInt(this.value,10));
+		});
+		$("#txtDa").change(function(){
+			calculator.set('da', parseInt(this.value,10));
+		});
+		$("#rangeTax").change(function(){
+			calculator.set('tax', parseInt(this.value,10));
+		});
+
+		$("#btnCalculate").click(function(){
+			calculator.calculate();
+		});
+
+		
+	});
+	</script>
+</head>
+<body>
+	<h1>Salary Calculator</h1>
+	<hr>
+	<div><label for="">Basic :</label><input type="text" name="" id="txtBasic"></div>
+	<div><label for="">HRA :</label><input type="text" name="" id="txtHra"></div>
+	<div><label for="">DA :</label><input type="text" name="" id="txtDa"></div>
+	<div>
+		<label for="">Tax :</label>
+		<input type="range" name="" id="rangeTax" min="0" max="30" value="0">
+		<span id="spanTax">[Tax%]</span>
+	</div>
+	<div><input type="button" value="Calculate" id="btnCalculate"></div>
+	<div>
+		<div id="divResult">[Salary]</div>
+	</div>
+</body>
+</html>
